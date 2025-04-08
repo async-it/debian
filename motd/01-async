@@ -1,0 +1,55 @@
+#!/bin/sh
+
+# Async IT Sàrl - 2025 - Jonas Sauge
+
+# This script is used to show some usefull informations when loging in on a system
+
+# USAGE
+## Download the motd file
+# wget -qO /etc/update-motd.d/01-async https://github.com/async-it/debian/raw/master/motd/01-async
+## make it executable
+# chmod +x /etc/update-motd.d/01-async
+## make a backup and delete motd file
+# cp /etc/motd /etc/motd.bck && rm -rf /etc/motd
+## Delete uname motd script
+# rm -rf /etc/update-motd.d/10-uname
+
+# SOURCES:
+# https://cloudybarz.com/custom-motd-in-linux-debian/
+# https://unix.stackexchange.com/questions/267562/show-only-physical-disks-when-using-df-and-mount
+
+
+# V1.0: Initial Release
+# V1.1: Added uptime
+# V1.2: Use hostname -I insead of -i to show all host IP's
+# V1.3: Get public ip's
+# V1.4: Add date
+
+
+freespace=$(df -H --type mount --type btrfs --type ext4 --type ext3 --type ext2 --type vfat --type iso9660)
+kernelversion=$(uname -r)
+uptime=$(uptime -p)
+systemdate=$(date +"%d.%m.%Y %H:%M:%S")
+
+echo "
+Welcome to:  	  $(hostname)
+User:       	  $(id -u -n)
+Contact:        Async IT Sàrl
+
+Operating System: $(awk -F= '/PRETTY/ {gsub(/"/,"");print $2}' /etc/os-release)
+Kernel version:   $kernelversion
+Uptime:           $uptime
+System time:      $systemdate
+
+Host local IP:    $(hostname -I)
+Public IPv4       $(curl --connect-timeout 1 myipv4.addr.tools)
+Public IPv6       $(curl --connect-timeout 1 myipv6.addr.tools)
+
+CPU:             $(cat /proc/cpuinfo | grep 'model name' | head -1 | cut -d':' -f2)
+Memory:           $(free -m | head -n 2 | tail -n 1 | awk {'print $2'}) M
+Swap:      	  $(free -m | tail -n 1 | awk {'print $2'}) M
+
+Disk:      
+ $(echo "$freespace")
+ 
+ "
