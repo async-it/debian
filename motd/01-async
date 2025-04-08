@@ -18,7 +18,7 @@ systemdate=$(date +"%d.%m.%Y %H:%M:%S")
 echo "
 Welcome to:  	  $(hostname)
 User:       	  $(id -u -n)
-Contact:        Async IT Sàrl
+Contact:          Async IT Sàrl
 
 Operating System: $(awk -F= '/PRETTY/ {gsub(/"/,"");print $2}' /etc/os-release)
 Kernel version:   $kernelversion
