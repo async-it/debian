@@ -37,5 +37,5 @@ Swap:      	  $(free -m | tail -n 1 | awk {'print $2'}) M
 
 Disk:      
 $(echo "$freespace")
- 
- "
+
+"
