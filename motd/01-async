@@ -10,12 +10,21 @@
 # V1.3: Get public ip's
 # V1.4: Add date
 # V1.5: Add Cpu cores total
+# V1.6: Add used memory and SWAP values - only call free -m once
+
+
 
 freespace=$(df -H --type mount --type btrfs --type ext4 --type ext3 --type ext2 --type vfat --type iso9660)
 kernelversion=$(uname -r)
 uptime=$(uptime -p)
 systemdate=$(date +"%d.%m.%Y %H:%M:%S")
 cpucores=$(nproc --all)
+cpumodel=$(cat /proc/cpuinfo | grep 'model name' | head -1 | cut -d':' -f2)
+memory=$(free -m)
+totalMemory=$(echo "$memory" | head -n 2 | tail -n 1 | awk {'print $2'})
+totalSwap=$(echo "$memory" | tail -n 1 | awk {'print $2'})
+usedMemory=$(echo "$memory" | head -n 2 | tail -n 1 | awk {'print $3'})
+usedSwap=$(echo "$memory" | tail -n 1 | awk {'print $3'})
 
 echo "
 Welcome to:  	  $(hostname)
@@ -31,9 +40,10 @@ Host local IP:    $(hostname -I)
 Public IPv4       $(curl --connect-timeout 1 myipv4.addr.tools)
 Public IPv6       $(curl --connect-timeout 1 myipv6.addr.tools)
 
-CPU:              $cpucores cores -$(cat /proc/cpuinfo | grep 'model name' | head -1 | cut -d':' -f2)
-Memory:           $(free -m | head -n 2 | tail -n 1 | awk {'print $2'}) M
-Swap:      	  $(free -m | tail -n 1 | awk {'print $2'}) M
+CPU:              $cpucores cores - $cpumodel
+Memory:           Total: $totalMemory	Used: $usedMemory
+Swap:             Total: $totalSwap	Used: $usedSwap
+
 
 Disk:      
 $(echo "$freespace")
