@@ -44,7 +44,6 @@ CPU:              $cpucores cores - $cpumodel
 Memory:           Total: $totalMemory	Used: $usedMemory
 Swap:             Total: $totalSwap	Used: $usedSwap
 
-
 Disk:      
 $(echo "$freespace")
 
